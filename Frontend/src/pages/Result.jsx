@@ -586,7 +586,7 @@ const storeRecommendations = async (recommendations) => {
     const token = localStorage.getItem('token');
     
     try {
-        const response = await fetch('https://my-app2-ubnu.onrender.com//api2/recommendations', {
+        const response = await fetch('https://my-app2-ubnu.onrender.com/api2/recommendations', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
