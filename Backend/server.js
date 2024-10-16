@@ -10,28 +10,18 @@ const PORT = process.env.PORT || 5000;
 const authRoutes = require('./routes/authRoutes');
 const faceAnalysis = require('./routes/faceAnalysis');
 const recommendationRoutes = require('./routes/recommendationRoutes');
-app.use('/api2/auth2', authRoutes);
-app.use('/api2', faceAnalysis); 
-app.use('/api2', recommendationRoutes);
-
-
-
-
 app.use(express.static(path.join(__dirname, 'build')));
 
 // Handle React routing, return all requests to React's index.html
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
-
-
-
 // Middleware
 app.use(cors());
 app.use(express.json()); // For parsing application/json
 app.use(bodyParser.json());
 app.use(cors({
-  origin: "https://my-app2-ubnu.onrender.com", // Replace with your frontend's URL
+  origin: "https://my-app2-ubnu.onrender.com/", // Replace with your frontend's URL
   credentials: true,
 }));
 app.use(bodyParser.json({ limit: '10mb' }));
@@ -46,7 +36,9 @@ mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
 
 
 
-
+app.use('/api2/auth2', authRoutes);
+app.use('/api2', faceAnalysis); 
+app.use('/api2', recommendationRoutes);
 // Test Route
 app.get('/', (req, res) => {
   res.send("Welcome to the backend!");
