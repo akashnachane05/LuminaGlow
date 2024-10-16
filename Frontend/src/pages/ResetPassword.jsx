@@ -31,7 +31,7 @@ export default function ResetPassword() {
     e.preventDefault();
 
     try {
-      const response = await fetch(`https://my-app2-ubnu.onrender.com//api2/auth2/reset-password/${token}`, {
+      const response = await fetch(`https://my-app2-ubnu.onrender.com/api2/auth2/reset-password/${token}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password }),

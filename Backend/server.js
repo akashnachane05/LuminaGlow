@@ -21,7 +21,7 @@ app.use(cors());
 app.use(express.json()); // For parsing application/json
 app.use(bodyParser.json());
 app.use(cors({
-  origin: "https://my-app2-ubnu.onrender.com/", // Replace with your frontend's URL
+  origin: "https://my-app2-ubnu.onrender.com", // Replace with your frontend's URL
   credentials: true,
 }));
 app.use(bodyParser.json({ limit: '10mb' }));
