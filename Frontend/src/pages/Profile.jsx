@@ -25,7 +25,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const API_BASE_URL = "http://localhost:5000";  
+        const API_BASE_URL = "https://my-app2-ubnu.onrender.com/";  
         const response = await fetch(`${API_BASE_URL}/api2/auth2/profile`, {
           method: 'GET',
           headers: {

@@ -90,7 +90,7 @@ exports.forgotPassword = async (req, res) => {
         await user.save();
 
         // Send reset email using SendGrid
-        const resetLink = `http://localhost:3000/reset-password/${resetToken}`;
+        const resetLink = `https://my-app2-ubnu.onrender.com//reset-password/${resetToken}`;
         const msg = {
             to: user.email,
             from: process.env.EMAIL, // Your verified sender email

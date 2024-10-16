@@ -76,7 +76,7 @@ export default function Dashboard() {
 
   const sendImageToServer = async (imageBase64) => {
     try {
-      const response = await fetch('http://localhost:5000/api2/analyze', {
+      const response = await fetch('https://my-app2-ubnu.onrender.com//api2/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ imageBase64,scanningDate }),
