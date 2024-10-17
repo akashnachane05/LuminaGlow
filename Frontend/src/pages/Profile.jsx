@@ -25,35 +25,26 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-          const token = localStorage.getItem('token');
-          console.log('Authorization Token:', token);
-  
-          const response = await fetch('https://my-app2-ubnu.onrender.com/api2/auth2/profile', {
-              method: 'GET',
-              headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${token}`
-              },
-          });
-  
-          if (!response.ok) {
-              throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-  
-          const data = await response.json(); 
-          // Set the profile data in state
-          setProfileData(data);
-          setRecommendations(data.recommendations); 
+        const API_BASE_URL = "https://my-app2-ubnu.onrender.com";  
+        const response = await fetch(`${API_BASE_URL}/api2/auth2/profile`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`, // Use token stored in localStorage
+          },
+          
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json(); 
+        // Set the profile data in state
+        setProfileData(data);
+        setRecommendations(data.recommendations); 
       } catch (error) {
-          console.error('Error fetching profile:', error);
-          if (error.response) {
-              const text = await error.response.text();
-              console.error('Response data:', text);
-          }
+        console.error('Error fetching profile:', error.response ? error.data : error.message);
       }
     };
-    
-  
 
     // Call the function to fetch profile data
     fetchProfileData();
