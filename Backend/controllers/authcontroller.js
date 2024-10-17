@@ -93,7 +93,7 @@ exports.forgotPassword = async (req, res) => {
         const resetLink = `https://my-app2-ubnu.onrender.com/reset-password/${resetToken}`;
         const msg = {
             to: user.email,
-            from: process.env.EMAIL, // Your verified sender email
+            from: process.env.EMAIL_SENDGRID, // Your verified sender email
             subject: 'Password Reset',
             text: `You requested a password reset. Click the link to reset: ${resetLink}`,
         };
