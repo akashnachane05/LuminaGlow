@@ -6,7 +6,7 @@ require('dotenv').config();
 const path =require('path')
 const bodyParser = require('body-parser');
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT ;
 const authRoutes = require('./routes/authRoutes');
 const faceAnalysis = require('./routes/faceAnalysis');
 const recommendationRoutes = require('./routes/recommendationRoutes');
