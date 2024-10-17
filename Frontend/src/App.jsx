@@ -293,9 +293,7 @@ export default function App() {
         <Route 
           path="/" 
           element={
-            <div>
                 <EnhancedHomePage/>    
-            </div>
           } 
         />
         
