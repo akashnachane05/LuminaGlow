@@ -7,74 +7,157 @@ import { Sparkles, Sun, Moon, Menu, Camera, Upload, User, Clock, ChevronRight, L
 import { useNavigate } from 'react-router-dom';
 import Progress from '../components/Progress';
 
-export default function Dashboard() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('analysis');
-  const [isScanning, setIsScanning] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [isComplete, setIsComplete] = useState(false);
-  const [stream, setStream] = useState(null);
-  const [scanningDate, setScanningDate] = useState(null); // State to store scanning date
 
+
+export default function Dashboard() {
+  const [isDarkMode, setIsDarkMode] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [isScanning, setIsScanning] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+  const [progress, setProgress] = useState(0)
+  const [isComplete, setIsComplete] = useState(false)
+  const [stream, setStream] = useState(null)
+  const [scanningDate, setScanningDate] = useState(null)
+  const [faceDetected, setFaceDetected] = useState(false)
+  const [lighting, setLighting] = useState('poor')
+  const [facePosition, setFacePosition] = useState('outside')
+  const [lookStraight, setLookStraight] = useState(false)
+  const [showError, setShowError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const [scanPhase, setScanPhase] = useState(0)
+  const [uploadedImageUrl, setUploadedImageUrl] = useState(null) // Added state for uploaded image URL
   
   const navigate = useNavigate();
-  const videoRef = useRef(null);
 
-  const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  const videoRef = useRef(null)
+  const canvasRef = useRef(null)
+
+  const toggleDarkMode = () => setIsDarkMode(!isDarkMode)
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen)
 
   const startScan = async () => {
-    if (isScanning || stream) return;
+    if (isScanning || stream) return
+    setIsScanning(false)
+    setProgress(0)
+    setScanPhase(0)
+    setFaceDetected(false)
+    setLighting('poor')
+    setFacePosition('outside')
+    setLookStraight(false)
+    setShowError(false)
+    setErrorMessage('')
+    setIsComplete(false)
+    setUploadedImageUrl(null) // Reset uploadedImageUrl
+
     try {
-      const currentDate = new Date().toISOString(); // Format as ISO string for consistency
-      setScanningDate(currentDate); // Store scanning date
+      const currentDate = new Date().toISOString()
+      setScanningDate(currentDate)
 
-      const mediaStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
-      setStream(mediaStream);
+      const mediaStream = await navigator.mediaDevices.getUserMedia({ 
+        video: { 
+          facingMode: 'user',
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        } 
+      })
+      setStream(mediaStream)
       if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
-        await videoRef.current.play();
+        videoRef.current.srcObject = mediaStream
+        await videoRef.current.play()
+        startFaceDetection()
       }
-      setIsScanning(true);
-      simulateProgress();
     } catch (error) {
-      console.error('Error accessing camera:', error);
+      console.error('Error accessing camera:', error)
+      setErrorMessage('Unable to access the camera. Please check permissions and try again.')
+      setShowError(true)
     }
-  };
+  }
 
-  const handleFileUpload = async (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setIsUploading(true);
-      setProgress(0);
-      simulateProgress();
+  const startFaceDetection = () => {
+    let detectionCount = 0
+    let noFaceCount = 0
+    const maxNoFaceAttempts = 10
+    const checkFace = setInterval(() => {
+      const isDetected = Math.random() > 0.3 // Simulate face detection (replace with actual face detection logic)
+      setFaceDetected(isDetected)
+      
+      if (isDetected) {
+        detectionCount++
+        noFaceCount = 0
+        setLighting(Math.random() > 0.7 ? 'poor' : 'good')
+        setFacePosition(Math.random() > 0.7 ? 'almost' : 'good')
+        setLookStraight(Math.random() > 0.2)
+        setShowError(false)
+        
+        if (detectionCount >= 3) {
+          clearInterval(checkFace)
+          setIsScanning(true)
+          simulateProgress()
+        }
+      } else {
+        noFaceCount++
+        detectionCount = 0
+        setErrorMessage('No face detected. Please adjust your position.')
+        setShowError(true)
+      }
 
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        const imageBase64 = e.target.result.split(',')[1];
-        await sendImageToServer(imageBase64);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+      if (noFaceCount >= maxNoFaceAttempts) {
+        clearInterval(checkFace)
+        setErrorMessage('Face detection failed. Please try again or ensure proper lighting.')
+        setShowError(true)
+        stopCamera()
+      }
+    }, 1000)
+  }
 
   const simulateProgress = () => {
-    let currentProgress = 0;
+    let currentProgress = 0
     const interval = setInterval(() => {
-      currentProgress += 10;
-      setProgress(currentProgress);
+      currentProgress += 1
+      setProgress(currentProgress)
+      
+      if (currentProgress < 25) setScanPhase(1)
+      else if (currentProgress < 50) setScanPhase(2)
+      else if (currentProgress < 75) setScanPhase(3)
+      else setScanPhase(4)
+
       if (currentProgress >= 100) {
-        clearInterval(interval);
-        setIsComplete(true);
-        setIsScanning(false);
-        setIsUploading(false);
+        clearInterval(interval)
+        setIsComplete(true)
+        setIsScanning(false)
+        setShowError(false)
       }
-    }, 200);
-  };
+    }, 50)
+  }
+
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0]
+    if (file) {
+      if (file.size > 80 * 1024) {
+        setErrorMessage('File size exceeds 80 KB. Please choose a smaller file.')
+        setShowError(true)
+        return
+      }
+      setIsUploading(true)
+      setProgress(0)
+      
+      // Create and set the URL for the uploaded image
+      const imageUrl = URL.createObjectURL(file)
+      setUploadedImageUrl(imageUrl)
+
+      simulateProgress()
+
+      const reader = new FileReader()
+      reader.onload = async (e) => {
+        const imageBase64 = e.target.result.split(',')[1]
+        await sendImageToServer(imageBase64)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
 
   const sendImageToServer = async (imageBase64) => {
+    // Implement your server communication logic here
     try {
       const response = await fetch('https://my-app2-ubnu.onrender.com/api2/analyze', {
         method: 'POST',
@@ -91,9 +174,12 @@ export default function Dashboard() {
       console.error('Error analyzing image:', error);
       setIsComplete(false);
     }
-  };
 
-  const viewResults = async () => {
+    console.log('Sending image to server:', imageBase64.substring(0, 50) + '...')
+  }
+
+  const viewResults =  async ()  => {
+    // Implement your results viewing logic here
     if (stream) {
       const canvas = document.createElement('canvas');
       const context = canvas.getContext('2d');
@@ -103,9 +189,35 @@ export default function Dashboard() {
       const imageBase64 = canvas.toDataURL('image/jpeg', 0.5).split(',')[1];
       await sendImageToServer(imageBase64);
     }
-  };
 
-  
+    console.log('Viewing results')
+    // For demonstration purposes, we'll just reset the state
+    stopCamera()
+    setIsScanning(false)
+    setIsUploading(false)
+    setProgress(0)
+    setScanPhase(0)
+    setIsComplete(false)
+    setErrorMessage('')
+    setFaceDetected(false)
+    setLighting('poor')
+    setFacePosition('outside')
+    setLookStraight(false)
+  }
+
+  const stopCamera = () => {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop())
+      setStream(null)
+    }
+  }
+
+  const retryFaceDetection = () => {
+    setShowError(false)
+    setErrorMessage('')
+    stopCamera()
+  }
+
   const handleLogout = () => {
     localStorage.removeItem('token'); // Remove the token from localStorage
     window.location.href = 'pages/LoginScreen'; // Redirect to login page
@@ -118,19 +230,21 @@ export default function Dashboard() {
    
   };
 
+
+
   useEffect(() => {
     return () => {
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
+      stopCamera()
+      if (uploadedImageUrl) {
+        URL.revokeObjectURL(uploadedImageUrl)
       }
-    };
-  }, [stream]);
+    }
+  }, [uploadedImageUrl])
 
   return (
     <div className={`min-h-screen ${isDarkMode ? 'dark' : ''}`}>
-      <div className="bg-white bg-opacity-90 dark:bg-gray-900 dark:bg-opacity-90 min-h-screen" >
-        {/* Header */}
-        <header className="fixed top-0 left-0 right-0 z-50 bg-white bg-opacity-10 backdrop-blur-md dark:bg-gray-800 dark:bg-opacity-30">
+      <div className="bg-white dark:bg-gray-900 min-h-screen">
+        <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md">
           <nav className="container mx-auto px-4 py-4">
             <div className="flex justify-between items-center">
               <motion.div
@@ -154,20 +268,20 @@ export default function Dashboard() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={handleLogout}
-                  className="p-2 rounded-full bg-white bg-opacity-20 dark:bg-gray-700"
+                  className="p-2 rounded-full bg-white/20 dark:bg-gray-700"
                 >
-                  <LogOut className="w-6 h-6 text-gray-800 dark:text-gray-200" />
+                  <LogOut className="w-6 w-6 text-gray-800 dark:text-gray-200" />
                 </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={toggleDarkMode}
-                  className="p-2 rounded-full bg-white bg-opacity-20 dark:bg-gray-700"
+                  className="p-2 rounded-full bg-white/20 dark:bg-gray-700"
                 >
                   {isDarkMode ? (
-                    <Sun className="w-6 h-6 text-gray-800 dark:text-gray-200" />
+                    <Sun className="h-6 w-6 text-gray-800 dark:text-gray-200" />
                   ) : (
-                    <Moon className="w-6 h-6 text-gray-800 dark:text-gray-200" />
+                    <Moon className="h-6 w-6 text-gray-800 dark:text-gray-200" />
                   )}
                 </motion.button>
               </div>
@@ -175,7 +289,6 @@ export default function Dashboard() {
           </nav>
         </header>
 
-        {/* Sidebar */}
         <AnimatePresence>
           {isSidebarOpen && (
             <motion.aside
@@ -187,9 +300,7 @@ export default function Dashboard() {
             >
               <nav className="p-4">
                 <ul className="space-y-2">
-                 
-                
-                  <SidebarItem icon={<User />} label="Profile" isActive={activeTab === 'profile'} onClick={() => handleTabClick('profile')} />
+                  <SidebarItem icon={<User />} label="Profile" onClick={handleTabClick} />
                   <SidebarItem icon={<LogOut />} label="Log Out" onClick={handleLogout} />
                 </ul>
               </nav>
@@ -197,114 +308,196 @@ export default function Dashboard() {
           )}
         </AnimatePresence>
 
-        {/* Main Content */}
-        <main className="pt-24 px-4 md:pl-4 pb-16">
-          <div className="container mx-auto">
-            <h1 className="text-3xl font-bold mb-8 text-gray-800 dark:text-gray-200">AI Skin Analysis</h1>
-            
-            {/* Face Mapping Interface */}
-            <Card className="mb-8">
-              <CardHeader>
-                <CardTitle>Face Mapping</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="relative aspect-video bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900 rounded-lg overflow-hidden">
-                  <video
-                    ref={videoRef}
-                    className="w-full h-full object-cover"
-                    playsInline
-                    muted
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    {!isScanning && !isUploading && !isComplete && (
-                      <div className="flex flex-col items-center space-y-4">
-                        <Button onClick={startScan} size="lg" className="flex items-center px-8 py-6 text-lg">
-                          <Camera className="w-6 h-6 mr-2" />
-                          Start Face Scan
-                        </Button>
-                        <p className="text-center text-gray-600 dark:text-gray-400">or</p>
-                        <Button
-                          onClick={() => document.getElementById('fileInput').click()}
-                          size="lg"
-                          className="flex items-center px-8 py-6 text-lg"
-                        >
-                          <Upload className="w-6 h-6 mr-2" />
-                          Upload Image
-                        </Button>
-                        <input
-                          id="fileInput"
-                          type="file"
-                          accept="image/*"
-                          onChange={handleFileUpload}
-                          className="hidden"
-                        />
-                      </div>
-                    )}
-                    {(isScanning || isUploading) && (
-                      <div className="w-full h-full flex flex-col items-center justify-center bg-black bg-opacity-50 text-white">
-                        <p className="mb-4 text-lg font-semibold">
-                          {isScanning ? 'Analyzing your skin...' : 'Uploading and analyzing your image...'}
-                        </p>
-                        <Progress value={progress} className="w-64 h-4" />
-                        <p className="mt-2">{progress}%</p>
-                      </div>
-                    )}
-                    {isComplete && (
-                      <div className="w-full h-full flex items-center justify-center bg-black bg-opacity-50">
-                        <Button onClick={viewResults} size="lg" className="px-8 py-6 text-lg">
-                          View Results
-                        </Button>
-                      </div>
-                    )}
-                  </div>
+        <main className="pt-24 px-4 md:pl-4 pb-16 container mx-auto">
+          <h1 className="text-3xl font-bold mb-8 text-gray-800 dark:text-gray-200">AI Skin Analysis</h1>
+          
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle>Face Mapping</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex justify-center gap-4 mb-4">
+                <div className={`px-4 py-1 rounded-full text-sm font-medium ${lighting === 'good' ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-700'}`}>
+                  LIGHTING
                 </div>
-              </CardContent>
-            </Card>
+                <div className={`px-4 py-1 rounded-full text-sm font-medium ${facePosition === 'good' ? 'bg-green-500 text-white' : facePosition === 'almost' ? 'bg-yellow-500 text-white' : 'bg-red-500 text-white'}`}>
+                  FACE POSITION
+                </div>
+                <div className={`px-4 py-1 rounded-full text-sm font-medium ${lookStraight ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-700'}`}>
+                  LOOK STRAIGHT
+                </div>
+              </div>
 
-            {/* Skin Health Tips */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Skin Health Tips</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                  <li className="flex items-center p-2 bg-gray-100 dark:bg-gray-700 rounded">
-                    <Sparkles className="w-4 h-4 mr-2 text-purple-500" />
-                    <span>Stay hydrated by drinking plenty of water throughout the day.</span>
-                  </li>
-                  <li className="flex items-center p-2 bg-gray-100 dark:bg-gray-700 rounded">
-                    <Sun className="w-4 h-4 mr-2 text-yellow-500" />
-                    <span>Always apply sunscreen, even on cloudy days, to protect your skin from UV damage.</span>
-                  </li>
-                  <li className="flex items-center p-2 bg-gray-100 dark:bg-gray-700 rounded">
-                    <Moon className="w-4 h-4 mr-2 text-blue-500" />
-                    <span>Get enough sleep to allow your skin time to repair and regenerate.</span>
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
-          </div>
+              <div className="relative aspect-square w-80 mx-auto bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900 rounded-full overflow-hidden">
+                {uploadedImageUrl ? (
+                  <img
+                    src={uploadedImageUrl}
+                    alt="Uploaded skin"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <>
+                    <video
+                      ref={videoRef}
+                      className="w-full h-full object-cover"
+                      playsInline
+                      muted
+                    />
+                    <canvas
+                      ref={canvasRef}
+                      className="absolute inset-0 w-full h-full"
+                      width={320}
+                      height={320}
+                    />
+                  </>
+                )}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  {!isScanning && !isUploading && !isComplete && !showError && (
+                    <div className="flex flex-col items-center space-y-4">
+                      <Button onClick={startScan} size="lg" className="flex items-center px-6 py-4 text-lg">
+                        <Camera className="w-6 h-6 mr-2" />
+                        Start Face Scan
+                      </Button>
+                      <p className="text-center text-gray-600 dark:text-gray-400">or</p>
+                      <Button
+                        onClick={() => document.getElementById('fileInput').click()}
+                        size="lg"
+                        className="flex items-center px-6 py-4 text-lg"
+                      >
+                        <Upload className="w-6 h-6 mr-2" />
+                        Upload Image
+                      </Button>
+                      <input
+                        id="fileInput"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileUpload}
+                        className="hidden"
+                      />
+                    </div>
+                  )}
+                  {isScanning && !isComplete && !showError && (
+                    <div className="w-full h-full flex flex-col items-center justify-center bg-black/50">
+                      <p className="text-lg font-semibold text-white mb-4">
+                        Analyzing your skin...
+                      </p>
+                      <div className="w-3/4 h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-green-500 transition-all duration-200 ease-in-out" 
+                          style={{ width: `${progress}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  )}
+                  {isUploading && !isComplete && !showError && (
+                    <div className="w-full h-full flex flex-col items-center justify-center bg-black/50">
+                      <p className="text-lg font-semibold text-white mb-4">
+                        Uploading and analyzing your image...
+                      </p>
+                      <div className="w-3/4 h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-green-500 transition-all duration-200 ease-in-out" 
+                          style={{ width: `${progress}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  )}
+                  {isComplete && !showError && (
+                    <div className="w-full h-full flex items-center justify-center bg-black/50">
+                      <Button onClick={viewResults} size="lg" className="px-6 py-4 text-lg">
+                        View Results
+                      </Button>
+                    </div>
+                  )}
+                  {showError && (
+                    <div className="w-full h-full flex flex-col items-center justify-center bg-black/50">
+                      <p className="text-lg font-semibold text-white mb-4 text-center px-4">
+                        {errorMessage}
+                      </p>
+                      <Button onClick={startScan} size="lg" className="px-6 py-4 text-lg">
+                        Retry Face Scan
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {(isScanning || isUploading) && !isComplete && !showError && (
+                <div className="mt-4 flex  justify-center items-center space-x-4">
+                  {[1, 2, 3, 4].map((phase) => (
+                    <div
+                      key={phase}
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                        phase <= scanPhase ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-700'
+                      }`}
+                    >
+                      {phase}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <AnimatePresence>
+                {showError && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className="mt-4"
+                  >
+                    <Alert variant="destructive">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>{errorMessage}</AlertDescription>
+                    </Alert>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <p className="text-sm text-center mt-4 text-gray-600 dark:text-gray-400">
+                Instructions: Position your face within the circle. Ensure good lighting for best results. 
+                For uploads, please use images under 80 KB in size.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Skin Health Tips</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-2">
+                <li className="flex items-center p-2 bg-gray-100 dark:bg-gray-700 rounded">
+                  <Sparkles className="w-4 h-4 mr-2 text-purple-500" />
+                  <span>Stay hydrated by drinking plenty of water throughout the day.</span>
+                </li>
+                <li className="flex items-center p-2 bg-gray-100 dark:bg-gray-700 rounded">
+                  <Sun className="w-4 h-4 mr-2 text-yellow-500" />
+                  <span>Always apply sunscreen, even on cloudy days, to protect your skin from UV damage.</span>
+                </li>
+                <li className="flex items-center p-2 bg-gray-100 dark:bg-gray-700 rounded">
+                  <Moon className="w-4 h-4 mr-2 text-blue-500" />
+                  <span>Get enough sleep to allow your skin time to repair and regenerate.</span>
+                </li>
+              </ul>
+            </CardContent>
+          </Card>
         </main>
       </div>
     </div>
-  );
+  )
 }
 
-function SidebarItem({ icon, label, isActive, onClick }) {
+function SidebarItem({ icon, label, onClick }) {
   return (
     <motion.li whileHover={{ x: 5 }} whileTap={{ scale: 0.95 }}>
       <button
         onClick={onClick}
-        className={`flex items-center w-full p-2 rounded-lg ${
-          isActive
-            ? 'bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-300'
-            : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
-        }`}
+        className="flex items-center w-full p-2 rounded-lg text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
       >
         {icon}
         <span className="ml-3">{label}</span>
         <ChevronRight className="w-4 h-4 ml-auto" />
       </button>
     </motion.li>
-  );
+  )
 }
