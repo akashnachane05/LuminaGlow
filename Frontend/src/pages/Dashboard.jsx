@@ -28,7 +28,7 @@ export default function Dashboard() {
   const [errorMessage, setErrorMessage] = useState('')
   const [scanPhase, setScanPhase] = useState(0)
   const [uploadedImageUrl, setUploadedImageUrl] = useState(null) // Added state for uploaded image URL
-  const [activeTab, setActiveTab] = useState(initialValue);
+  const [activeTab, setActiveTab] = useState(null);
 
   
   const navigate = useNavigate();
