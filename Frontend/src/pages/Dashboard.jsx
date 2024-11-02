@@ -6,7 +6,9 @@ import Card from '../components/cards';
 import { Sparkles, Sun, Moon, Menu, Camera, Upload, User, Clock, ChevronRight, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Progress from '../components/Progress';
-
+import Alert from '../components/Alert';
+import { AlertCircle } from 'lucide-react';
+import AlertDescription from  '../components/AlertDescription';
 
 
 export default function Dashboard() {
@@ -26,6 +28,8 @@ export default function Dashboard() {
   const [errorMessage, setErrorMessage] = useState('')
   const [scanPhase, setScanPhase] = useState(0)
   const [uploadedImageUrl, setUploadedImageUrl] = useState(null) // Added state for uploaded image URL
+  const [activeTab, setActiveTab] = useState(initialValue);
+
   
   const navigate = useNavigate();
 
