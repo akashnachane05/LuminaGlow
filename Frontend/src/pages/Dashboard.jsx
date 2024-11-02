@@ -9,8 +9,6 @@ import Progress from '../components/Progress';
 import Alert from '../components/Alert';
 import { AlertCircle } from 'lucide-react';
 import AlertDescription from  '../components/AlertDescription';
-
-
 export default function Dashboard() {
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
@@ -28,14 +26,10 @@ export default function Dashboard() {
   const [errorMessage, setErrorMessage] = useState('')
   const [scanPhase, setScanPhase] = useState(0)
   const [uploadedImageUrl, setUploadedImageUrl] = useState(null) // Added state for uploaded image URL
-  const [activeTab, setActiveTab] = useState(null);
-
-  
+  const [activeTab, setActiveTab] = useState('analysis');
   const navigate = useNavigate();
-
   const videoRef = useRef(null)
   const canvasRef = useRef(null)
-
   const toggleDarkMode = () => setIsDarkMode(!isDarkMode)
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen)
 
@@ -52,11 +46,9 @@ export default function Dashboard() {
     setErrorMessage('')
     setIsComplete(false)
     setUploadedImageUrl(null) // Reset uploadedImageUrl
-
     try {
       const currentDate = new Date().toISOString()
       setScanningDate(currentDate)
-
       const mediaStream = await navigator.mediaDevices.getUserMedia({ 
         video: { 
           facingMode: 'user',
@@ -76,7 +68,6 @@ export default function Dashboard() {
       setShowError(true)
     }
   }
-
   const startFaceDetection = () => {
     let detectionCount = 0
     let noFaceCount = 0
@@ -84,7 +75,6 @@ export default function Dashboard() {
     const checkFace = setInterval(() => {
       const isDetected = Math.random() > 0.3 // Simulate face detection (replace with actual face detection logic)
       setFaceDetected(isDetected)
-      
       if (isDetected) {
         detectionCount++
         noFaceCount = 0
@@ -104,7 +94,6 @@ export default function Dashboard() {
         setErrorMessage('No face detected. Please adjust your position.')
         setShowError(true)
       }
-
       if (noFaceCount >= maxNoFaceAttempts) {
         clearInterval(checkFace)
         setErrorMessage('Face detection failed. Please try again or ensure proper lighting.')
@@ -113,7 +102,6 @@ export default function Dashboard() {
       }
     }, 1000)
   }
-
   const simulateProgress = () => {
     let currentProgress = 0
     const interval = setInterval(() => {
@@ -230,12 +218,9 @@ export default function Dashboard() {
   const handleTabClick = (tab) => {
     
     setActiveTab(tab);
-    if (tab === 'profile') navigate('/Profile');
+    if (tab === 'profile') navigate('pages/Profile');
    
   };
-
-
-
   useEffect(() => {
     return () => {
       stopCamera()
@@ -244,7 +229,6 @@ export default function Dashboard() {
       }
     }
   }, [uploadedImageUrl])
-
   return (
     <div className={`min-h-screen ${isDarkMode ? 'dark' : ''}`}>
       <div className="bg-white dark:bg-gray-900 min-h-screen">
@@ -292,7 +276,6 @@ export default function Dashboard() {
             </div>
           </nav>
         </header>
-
         <AnimatePresence>
           {isSidebarOpen && (
             <motion.aside
@@ -304,17 +287,15 @@ export default function Dashboard() {
             >
               <nav className="p-4">
                 <ul className="space-y-2">
-                  <SidebarItem icon={<User />} label="Profile" onClick={handleTabClick} />
+                <SidebarItem icon={<User />} label="Profile" isActive={activeTab === 'profile'} onClick={() => handleTabClick('profile')} />
                   <SidebarItem icon={<LogOut />} label="Log Out" onClick={handleLogout} />
                 </ul>
               </nav>
             </motion.aside>
           )}
         </AnimatePresence>
-
         <main className="pt-24 px-4 md:pl-4 pb-16 container mx-auto">
           <h1 className="text-3xl font-bold mb-8 text-gray-800 dark:text-gray-200">AI Skin Analysis</h1>
-          
           <Card className="mb-8">
             <CardHeader>
               <CardTitle>Face Mapping</CardTitle>
@@ -331,7 +312,6 @@ export default function Dashboard() {
                   LOOK STRAIGHT
                 </div>
               </div>
-
               <div className="relative aspect-square w-80 mx-auto bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900 rounded-full overflow-hidden">
                 {uploadedImageUrl ? (
                   <img
