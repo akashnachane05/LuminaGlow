@@ -218,7 +218,7 @@ export default function Dashboard() {
   const handleTabClick = (tab) => {
     
     setActiveTab(tab);
-    if (tab === 'profile') navigate('pages/Profile');
+    if (tab === 'profile') navigate('/Profile');
    
   };
   useEffect(() => {
