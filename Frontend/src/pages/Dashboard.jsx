@@ -27,6 +27,10 @@ export default function Dashboard() {
   const [scanPhase, setScanPhase] = useState(0)
   const [uploadedImageUrl, setUploadedImageUrl] = useState(null) // Added state for uploaded image URL
   const [activeTab, setActiveTab] = useState('analysis');
+  
+  const [retryUpload, setRetryUpload] = useState(false);
+  const [faceScanError, setFaceScanError] = useState(false);
+  const [imageUploadError, setImageUploadError] = useState(false);
   const navigate = useNavigate();
   const videoRef = useRef(null)
   const canvasRef = useRef(null)
@@ -126,8 +130,10 @@ export default function Dashboard() {
     const file = event.target.files[0]
     if (file) {
       if (file.size > 80 * 1024) {
-        setErrorMessage('File size exceeds 80 KB. Please choose a smaller file.')
-        setShowError(true)
+      setErrorMessage('File size exceeds 80 KB. Please choose a smaller file.');
+      setShowError(true); // Show error for file size issue
+      setImageUploadError(true); // Set error flag for image upload
+      setIsUploading(false); // Stop the upload process
         return
       }
       setIsUploading(true)
@@ -204,12 +210,25 @@ export default function Dashboard() {
     }
   }
 
-  const retryFaceDetection = () => {
-    setShowError(false)
-    setErrorMessage('')
-    stopCamera()
-  }
-
+  const retryFaceScan = () => {
+    setShowError(false); // Hide error message
+    setErrorMessage(''); // Clear error message
+    setFaceScanError(false); // Reset face scan error state
+    stopCamera(); // Stop the camera to reset face detection
+    startScan(); // Restart the scan
+  };
+  
+  const handleFaceScanError = () => {
+    setErrorMessage('No face detected. Please try again.');
+    setShowError(true); // Show error message for face scan
+    setFaceScanError(true); // Set error flag for face scan
+  };
+  const retryImageUpload = () => {
+    setShowError(false); // Hide error message
+    setUploadedImageUrl(null); // Reset the uploaded image URL
+    setProgress(0); // Reset progress
+    setIsUploading(false); // Reset upload state
+  };
   const handleLogout = () => {
     localStorage.removeItem('token'); // Remove the token from localStorage
     window.location.href = 'pages/LoginScreen'; // Redirect to login page
@@ -394,15 +413,18 @@ export default function Dashboard() {
                     </div>
                   )}
                   {showError && (
-                    <div className="w-full h-full flex flex-col items-center justify-center bg-black/50">
-                      <p className="text-lg font-semibold text-white mb-4 text-center px-4">
-                        {errorMessage}
-                      </p>
-                      <Button onClick={startScan} size="lg" className="px-6 py-4 text-lg">
-                        Retry Face Scan
-                      </Button>
-                    </div>
-                  )}
+                  <div className="error-message">
+                    <p>{errorMessage}</p>
+                    {/* Conditional retry buttons */}
+                    {imageUploadError && (
+                      <button onClick={retryImageUpload}>Retry Image Upload</button>
+                    )}
+                    {faceScanError && (
+                      <button onClick={retryFaceScan}>Retry Face Scan</button>
+                    )}
+                  </div>
+                )}
+
                 </div>
               </div>
 
@@ -441,6 +463,7 @@ export default function Dashboard() {
                 Instructions: Position your face within the circle. Ensure good lighting for best results. 
                 For uploads, please use images under 80 KB in size.
               </p>
+              
             </CardContent>
           </Card>
 
