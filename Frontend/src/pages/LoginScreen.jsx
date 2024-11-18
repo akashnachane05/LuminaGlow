@@ -10,7 +10,8 @@ import Card from '../components/cards';
 import { Link } from 'react-router-dom';
 import Switch from '../components/Switch';
 import { useNavigate } from 'react-router-dom';
-
+import Skinimage from './Images/Skinimage.jpg'
+import  SkinImages2 from './Images/SkinImages2.jpg'
 export default function SignIn() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const navigate = useNavigate();
@@ -74,6 +75,37 @@ export default function SignIn() {
             LuminaGlow
           </span>
         </motion.div>
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-8 p-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="relative w-full max-w-md aspect-square"
+          >
+            <img
+              src={Skinimage}
+              alt="Skincare products illustration"
+              className="object-contain w-full h-full"
+            />
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="relative w-full max-w-md aspect-square"
+          >
+            <img
+              src={SkinImages2}
+              alt="Skincare routine illustration"
+              className="object-contain w-full h-full"
+            />
+          </motion.div>
+        </div>
+        
+        <div className="absolute inset-0 bg-gradient-to-t from-white/80 to-white/20 dark:from-gray-900/80 dark:to-gray-900/20 backdrop-blur-[2px]" />
+      
+
       </div>
 
       {/* Right side */}

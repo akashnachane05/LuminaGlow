@@ -230,7 +230,7 @@ export default function Dashboard() {
     }
   }, [uploadedImageUrl])
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'dark' : ''}`}>
+    <div className={`min-h-screen  ${isDarkMode ? 'dark' : ''}`}>
       <div className="bg-white dark:bg-gray-900 min-h-screen">
         <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md">
           <nav className="container mx-auto px-4 py-4">
