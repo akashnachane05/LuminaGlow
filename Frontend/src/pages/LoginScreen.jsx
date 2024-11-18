@@ -84,35 +84,37 @@ export default function SignIn() {
           </span>
         </motion.div>
         
-        {/* Image 1 */}
+        {/* Circular Image Layout */}
+      <div className="relative w-full flex items-center justify-center">
+        {/* Top Circle Image */}
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="relative w-5/6 max-w-md aspect-square transform translate-x-[-20px]"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="absolute w-56 h-56 rounded-full overflow-hidden shadow-lg -top-12 left-10"
         >
           <img
-            src={require('../Images/Skinimage.jpg')}
+            src={require("../Images/Skinimage.jpg")}
             alt="Skincare products illustration"
-            className="object-cover w-full h-full rounded-lg shadow-lg"
+            className="object-cover w-full h-full"
           />
         </motion.div>
-        
-        {/* Image 2 */}
+
+        {/* Bottom Circle Image */}
         <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="relative w-5/6 max-w-md aspect-square transform translate-x-[20px]"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="absolute w-56 h-56 rounded-full overflow-hidden shadow-lg top-20 right-10"
         >
           <img
-            src={require('../Images/SkinImages2.jpg')}
+            src={require("../Images/SkinImages2.jpg")}
             alt="Skincare routine illustration"
-            className="object-cover w-full h-full rounded-lg shadow-lg"
+            className="object-cover w-full h-full"
           />
         </motion.div>
       </div>
-
+    </div>
 
       {/* Right side */}
       <div
