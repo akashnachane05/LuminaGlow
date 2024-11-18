@@ -73,58 +73,56 @@ const SignUp = () => {
     <div className={`min-h-screen flex transition-colors duration-300 ${isDarkMode ? 'bg-gray-600' : 'bg-white'}`}>
       {/* Left side with distinct backgrounds for light and dark modes */}
       {/* Left side */}
-      <div
-        className={`w-1/3 flex flex-col items-center justify-start transition-all duration-300 gap-8 ${
-          isDarkMode ? 'bg-gray-600' : 'bg-white'
-        } mt-10 ml-4`}
-      >
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          className="flex items-center justify-start mb-6"
-        >
-          <Sparkles
-            className="w-8 h-8 mr-2 text-purple-500 dark:text-purple-400"
-            style={{ filter: 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.5))' }}
-          />
-          <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600 dark:from-purple-300 dark:to-pink-500">
-            LuminaGlow
-          </span>
-        </motion.div>
-        
-        {/* Circular Image 1 */}
-      {/* Circular Image Layout */}
-      <div className="relative w-full flex items-center justify-center">
-        {/* Top Circle Image */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="absolute w-56 h-56 rounded-full overflow-hidden shadow-lg -top-12 left-10"
-        >
-          <img
-            src={require("../Images/Skinimage.jpg")}
-            alt="Skincare products illustration"
-            className="object-cover w-full h-full"
-          />
-        </motion.div>
+      {/* Left side */}
+<div
+  className={`w-1/3 flex flex-col items-center justify-start transition-all duration-300 gap-8 ${
+    isDarkMode ? 'bg-gray-600' : 'bg-white'
+  } mt-10 ml-4`}
+>
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ duration: 0.5 }}
+    className="flex items-center justify-start mb-6"
+  >
+    <Sparkles
+      className="w-8 h-8 mr-2 text-purple-500 dark:text-purple-400"
+      style={{ filter: 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.5))' }}
+    />
+    <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600 dark:from-purple-300 dark:to-pink-500">
+      LuminaGlow
+    </span>
+  </motion.div>
 
-        {/* Bottom Circle Image */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="absolute w-56 h-56 rounded-full overflow-hidden shadow-lg top-20 right-10"
-        >
-          <img
-            src={require("../Images/SkinImages2.jpg")}
-            alt="Skincare routine illustration"
-            className="object-cover w-full h-full"
-          />
-        </motion.div>
-      </div>
-    </div>
+  {/* Image 1 */}
+  <motion.div
+    initial={{ opacity: 0, x: -40, y: -40 }} // Starting from top-left
+    animate={{ opacity: 1, x: 0, y: 0 }} // Moving to the center
+    transition={{ duration: 0.5, delay: 0.2 }}
+    className="relative w-5/6 max-w-md aspect-square transform"
+  >
+    <img
+      src={require('../Images/Skinimage.jpg')}
+      alt="Skincare products illustration"
+      className="object-cover w-full h-full rounded-lg shadow-lg"
+    />
+  </motion.div>
+
+  {/* Image 2 */}
+  <motion.div
+    initial={{ opacity: 0, x: 40, y: 40 }} // Starting from bottom-right
+    animate={{ opacity: 1, x: 0, y: 0 }} // Moving to the center
+    transition={{ duration: 0.5, delay: 0.4 }}
+    className="relative w-5/6 max-w-md aspect-square transform"
+  >
+    <img
+      src={require('../Images/SkinImages2.jpg')}
+      alt="Skincare routine illustration"
+      className="object-cover w-full h-full rounded-lg shadow-lg"
+    />
+  </motion.div>
+</div>
+
 
       {/* Right side with a more distinct gradient for both light and dark modes */}
       <div className={`w-2/3 flex flex-col items-center justify-center p-6 transition-all duration-300 ${isDarkMode ? 'bg-gradient-to-r from-gray-600 to-black' : 'bg-gradient-to-l from-pink-400 via-pink-300 to-white'}`}>

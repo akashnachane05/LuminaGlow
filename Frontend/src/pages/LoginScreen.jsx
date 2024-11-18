@@ -64,57 +64,57 @@ export default function SignIn() {
     >
       {/* Left side */}
       {/* Left side */}
-      <div
-        className={`w-1/3 flex flex-col items-center justify-start transition-all duration-300 gap-8 ${
-          isDarkMode ? 'bg-gray-600' : 'bg-white'
-        } mt-10 ml-4`}
-      >
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          className="flex items-center justify-start mb-6"
-        >
-          <Sparkles
-            className="w-8 h-8 mr-2 text-purple-500 dark:text-purple-400"
-            style={{ filter: 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.5))' }}
-          />
-          <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600 dark:from-purple-300 dark:to-pink-500">
-            LuminaGlow
-          </span>
-        </motion.div>
-        
-        {/* Circular Image Layout */}
-      <div className="relative w-full flex items-center justify-center">
-        {/* Top Circle Image */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="absolute w-56 h-56 rounded-full overflow-hidden shadow-lg -top-12 left-10"
-        >
-          <img
-            src={require("../Images/Skinimage.jpg")}
-            alt="Skincare products illustration"
-            className="object-cover w-full h-full"
-          />
-        </motion.div>
+      {/* Left side */}
+<div
+  className={`w-1/3 flex flex-col items-center justify-start transition-all duration-300 gap-8 ${
+    isDarkMode ? 'bg-gray-600' : 'bg-white'
+  } mt-10 ml-4`}
+>
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ duration: 0.5 }}
+    className="flex items-center justify-start mb-6"
+  >
+    <Sparkles
+      className="w-8 h-8 mr-2 text-purple-500 dark:text-purple-400"
+      style={{ filter: 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.5))' }}
+    />
+    <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600 dark:from-purple-300 dark:to-pink-500">
+      LuminaGlow
+    </span>
+  </motion.div>
 
-        {/* Bottom Circle Image */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="absolute w-56 h-56 rounded-full overflow-hidden shadow-lg top-20 right-10"
-        >
-          <img
-            src={require("../Images/SkinImages2.jpg")}
-            alt="Skincare routine illustration"
-            className="object-cover w-full h-full"
-          />
-        </motion.div>
-      </div>
-    </div>
+  {/* Image 1 */}
+  <motion.div
+    initial={{ opacity: 0, x: -40, y: -40 }} // Starting from top-left
+    animate={{ opacity: 1, x: 0, y: 0 }} // Moving to the center
+    transition={{ duration: 0.5, delay: 0.2 }}
+    className="relative w-5/6 max-w-md aspect-square transform"
+  >
+    <img
+      src={require('../Images/Skinimage.jpg')}
+      alt="Skincare products illustration"
+      className="object-cover w-full h-full rounded-lg shadow-lg"
+    />
+  </motion.div>
+
+  {/* Image 2 */}
+  <motion.div
+    initial={{ opacity: 0, x: 40, y: 40 }} // Starting from bottom-right
+    animate={{ opacity: 1, x: 0, y: 0 }} // Moving to the center
+    transition={{ duration: 0.5, delay: 0.4 }}
+    className="relative w-5/6 max-w-md aspect-square transform"
+  >
+    <img
+      src={require('../Images/SkinImages2.jpg')}
+      alt="Skincare routine illustration"
+      className="object-cover w-full h-full rounded-lg shadow-lg"
+    />
+  </motion.div>
+</div>
+
+
 
       {/* Right side */}
       <div
