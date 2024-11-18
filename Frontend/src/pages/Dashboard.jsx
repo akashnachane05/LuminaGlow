@@ -209,7 +209,6 @@ export default function Dashboard() {
       setStream(null)
     }
   }
-
   const retryFaceScan = () => {
     setShowError(false); // Hide error message
     setErrorMessage(''); // Clear error message
@@ -218,11 +217,15 @@ export default function Dashboard() {
     startScan(); // Restart the scan
   };
   
-  const handleFaceScanError = () => {
-    setErrorMessage('No face detected. Please try again.');
-    setShowError(true); // Show error message for face scan
-    setFaceScanError(true); // Set error flag for face scan
+  const handleFaceScanError = (message) => {
+    setErrorMessage(message || 'Face scan failed. Please try again.');
+    setFaceScanError(true); // Indicate a scan error occurred
+    stopCamera(); // Stop the camera to reset for the next attempt
+    setShowError(true); // Show error message to the user
   };
+  
+  
+ 
   const retryImageUpload = () => {
     setShowError(false); // Hide error message
     setUploadedImageUrl(null); // Reset the uploaded image URL
@@ -417,10 +420,10 @@ export default function Dashboard() {
                     <p>{errorMessage}</p>
                     {/* Conditional retry buttons */}
                     {imageUploadError && (
-                      <button onClick={retryImageUpload}>Retry Image Upload</button>
+                      <button onClick={retryImageUpload} className="retry-button">Retry Image Upload</button>
                     )}
                     {faceScanError && (
-                      <button onClick={retryFaceScan}>Retry Face Scan</button>
+                      <button onClick={retryFaceScan} className="retry-button">Retry Face Scan </button>
                     )}
                   </div>
                 )}
