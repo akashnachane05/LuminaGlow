@@ -102,7 +102,7 @@ const SignUp = () => {
     className="relative w-5/6 max-w-md aspect-square transform"
   >
     <img
-      src={require('../Images/Skinimage.jpg')}
+      src={require('../Images/SkinImages3.jpg')}
       alt="Skincare products illustration"
       className="object-cover w-full h-full rounded-lg shadow-lg"
     />
@@ -116,7 +116,7 @@ const SignUp = () => {
     className="relative w-5/6 max-w-md aspect-square transform"
   >
     <img
-      src={require('../Images/SkinImages2.jpg')}
+      src={require('../Images/SkinImages4.jpg')}
       alt="Skincare routine illustration"
       className="object-cover w-full h-full rounded-lg shadow-lg"
     />
