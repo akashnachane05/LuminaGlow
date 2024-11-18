@@ -209,23 +209,25 @@ export default function Dashboard() {
       setStream(null)
     }
   }
-  const retryFaceScan = () => {
-    setShowError(false); // Hide error message
-    setErrorMessage(''); // Clear error message
-    setFaceScanError(false); // Reset face scan error state
-    stopCamera(); // Stop the camera to reset face detection
-    startScan(); // Restart the scan
-  };
+
+  // const retryFaceScan = () => {
+  //   setShowError(false); // Hide error message
+  //   setErrorMessage(''); // Clear error message
+  //   setFaceScanError(false); // Reset face scan error state
+  //   stopCamera(); // Stop the camera to reset face detection
+  //   startScan(); // Restart the scan
+  // };
   
-  const handleFaceScanError = (message) => {
-    setErrorMessage(message || 'Face scan failed. Please try again.');
-    setFaceScanError(true); // Indicate a scan error occurred
-    stopCamera(); // Stop the camera to reset for the next attempt
-    setShowError(true); // Show error message to the user
-  };
-  
-  
- 
+  // const handleFaceScanError = () => {
+  //   setErrorMessage('No face detected. Please try again.');
+  //   setShowError(true); // Show error message for face scan
+  //   setFaceScanError(true); // Set error flag for face scan
+  // };
+  const retryFaceDetection = () => {
+    setShowError(false)
+    setErrorMessage('')
+    stopCamera()
+  }
   const retryImageUpload = () => {
     setShowError(false); // Hide error message
     setUploadedImageUrl(null); // Reset the uploaded image URL
@@ -416,14 +418,18 @@ export default function Dashboard() {
                     </div>
                   )}
                   {showError && (
-                  <div className="error-message">
-                    <p>{errorMessage}</p>
+                  <div className="w-full h-full flex flex-col items-center justify-center bg-black/50">
+                  <p className="text-lg font-semibold text-white mb-4 text-center px-4">
+                    {errorMessage}
+                  </p>
                     {/* Conditional retry buttons */}
                     {imageUploadError && (
-                      <button onClick={retryImageUpload} className="retry-button">Retry Image Upload</button>
+                      <button onClick={retryImageUpload}>Retry Image Upload</button>
                     )}
                     {faceScanError && (
-                      <button onClick={retryFaceScan} className="retry-button">Retry Face Scan </button>
+                      <Button onClick={startScan} size="lg" className="px-6 py-4 text-lg">
+                      Retry Face Scan
+                    </Button>
                     )}
                   </div>
                 )}
