@@ -83,6 +83,37 @@ const SignUp = () => {
             LuminaGlow
           </span>
         </motion.div>
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-8 p-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="relative w-full max-w-md aspect-square"
+          >
+            <img
+              src={require('../Images/SkinImages3.jpg')} 
+              alt="Skincare products illustration"
+              className="object-contain w-full h-full"
+            />
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="relative w-full max-w-md aspect-square"
+          >
+            <img
+              src={require('../Images/SkinImages4.jpg')} 
+              alt="Skincare routine illustration"
+              className="object-contain w-full h-full"
+            />
+          </motion.div>
+        </div>
+        
+        <div className="absolute inset-0 bg-gradient-to-t from-white/80 to-white/20 dark:from-gray-900/80 dark:to-gray-900/20 backdrop-blur-[2px]" />
+      
+
       </div>
 
       {/* Right side with a more distinct gradient for both light and dark modes */}

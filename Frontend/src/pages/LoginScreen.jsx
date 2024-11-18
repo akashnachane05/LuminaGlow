@@ -10,8 +10,7 @@ import Card from '../components/cards';
 import { Link } from 'react-router-dom';
 import Switch from '../components/Switch';
 import { useNavigate } from 'react-router-dom';
-import Skinimage from './Images/Skinimage.jpg'
-import  SkinImages2 from './Images/SkinImages2.jpg'
+
 export default function SignIn() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const navigate = useNavigate();
@@ -83,7 +82,7 @@ export default function SignIn() {
             className="relative w-full max-w-md aspect-square"
           >
             <img
-              src={Skinimage}
+              src={require('../Images/Skinimage.jpg')} 
               alt="Skincare products illustration"
               className="object-contain w-full h-full"
             />
@@ -96,7 +95,7 @@ export default function SignIn() {
             className="relative w-full max-w-md aspect-square"
           >
             <img
-              src={SkinImages2}
+              src={require('../Images/SkinImages2.jpg')} 
               alt="Skincare routine illustration"
               className="object-contain w-full h-full"
             />
